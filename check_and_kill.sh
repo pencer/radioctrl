@@ -35,7 +35,7 @@ if [ $RETVAL -eq 0 ]; then
     fi
     sleep 5
   done
-  echo "Going to kill mpg123" >> $DEVNULL
+  echo "Going to kill ${PROGNAME}" >> $DEVNULL
   PID=`echo $CHK | awk '{print $2}'`
   kill -HUP $PID
   echo "Sent HUP to PID=$PID" >> $DEVNULL
