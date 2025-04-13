@@ -11,6 +11,7 @@ while [ $# -ge 1 ]; do
   shift
 done
 
+RADIOINFOFILE=/var/tmp/radioinfo.txt
 RADIOIDFILE=/var/tmp/radioid.txt
 RADIOID=1
 # VRT URLs: https://www.vrt.be/nl/aanbod/kijk-en-luister/radio-luisteren/streamingslinks-radio/
@@ -19,11 +20,12 @@ RADIOURL[1]="http://icecast.vrtcdn.be/stubru_bruut-high.mp3"
 RADIOURL[2]="http://icecast.vrtcdn.be/stubru-high.mp3"
 RADIOURL[3]="http://icecast.vrtcdn.be/ketnetradio-high.mp3"
 RADIOURL[4]="http://icecast.vrtcdn.be/mnm-high.mp3"
-RADIOURL[5]="/home/pi/Music/Wave.list"
+#RADIOURL[5]="/home/pi/Music/Wave.list"
+RADIOURL[5]="http://ice1.somafm.com/u80s-128-mp3"
 RADIOURL[6]="http://live-radio01.mediahubaustralia.com/JAZW/mp3/"
 RADIOIDMAX=7
 
-USE_MPG123=0
+USE_MPG123=${USE_MPG123:-0}
 if [ $USE_MPG123 -eq 1 ]; then
   CHK=`ps -ef | grep mpg123 | grep -v grep`
 else
@@ -46,12 +48,13 @@ if [ $RETVAL -eq 1 ]; then
   TARGETURL=${RADIOURL[$RADIOID]}
   echo $TARGETURL
 
-  BTDEVICE="-a bluealsa:DEV=6C:5A:B5:70:F8:2A"
+  BTDEVICE=${BTDEVICE:-"-a bluealsa:DEV=6C:5A:B5:70:F8:2A"}
+  echo BTDEVICE=$BTDEVICE
 
-  VOLUME=5
+  VOLUME=10000
   if [ ${TARGETURL:0:4} == "http" ]; then
     if [ $USE_MPG123 -eq 1 ]; then
-      curl -L $TARGETURL 2> /dev/null | /usr/bin/mpg123 --reopen --gain $VOLUME $BTDEVICE - 2> $RADIOINFOFILE & 
+      curl -L $TARGETURL 2> /dev/null | /usr/bin/mpg123 --reopen -f $VOLUME $BTDEVICE - 2> $RADIOINFOFILE & 
     else
       goodvibes --without-ui $TARGETURL &
     fi
