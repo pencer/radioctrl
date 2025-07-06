@@ -40,6 +40,10 @@ if [ $RETVAL -eq 1 ]; then
   echo CURID=$CURID
   if [ "$TARGETID" != "" ]; then
     NEXTID=$TARGETID
+    if [ $NEXTID -lt 0 ]; then
+      echo "Exit since $NEXTID < 0"
+      exit
+    fi
   else
     NEXTID=$(( $CURID + 1 ))
   fi
